@@ -138,22 +138,22 @@ namespace Trxlog2Html.ResultXmlElements
 
         public CountersElement(XElement elem)
         {
-            Total = elem.Attribute("total").Value;
-            Executed = elem.Attribute("executed").Value;
-            Passed = elem.Attribute("passed").Value;
-            Failed = elem.Attribute("failed").Value;
-            Error = elem.Attribute("error").Value;
-            Timeout = elem.Attribute("timeout").Value;
-            Aborted = elem.Attribute("aborted").Value;
-            Inconclusive = elem.Attribute("inconclusive").Value;
-            PassedButRunAborted = elem.Attribute("passedButRunAborted").Value;
-            NotRunnable = elem.Attribute("notRunnable").Value;
-            NotExecuted = elem.Attribute("notExecuted").Value;
-            Disconnected = elem.Attribute("disconnected").Value;
-            Warning = elem.Attribute("warning").Value;
-            Completed = elem.Attribute("completed").Value;
-            InProgress = elem.Attribute("inProgress").Value;
-            Pending = elem.Attribute("pending").Value;
+            Total = elem.Attribute("total")?.Value;
+            Executed = elem.Attribute("executed")?.Value;
+            Passed = elem.Attribute("passed")?.Value;
+            Failed = elem.Attribute("failed")?.Value;
+            Error = elem.Attribute("error")?.Value;
+            Timeout = elem.Attribute("timeout")?.Value;
+            Aborted = elem.Attribute("aborted")?.Value;
+            Inconclusive = elem.Attribute("inconclusive")?.Value;
+            PassedButRunAborted = elem.Attribute("passedButRunAborted")?.Value;
+            NotRunnable = elem.Attribute("notRunnable")?.Value;
+            NotExecuted = elem.Attribute("notExecuted")?.Value;
+            Disconnected = elem.Attribute("disconnected")?.Value;
+            Warning = elem.Attribute("warning")?.Value;
+            Completed = elem.Attribute("completed")?.Value;
+            InProgress = elem.Attribute("inProgress")?.Value;
+            Pending = elem.Attribute("pending")?.Value;
         }
 
         public string Total { get; set; }
