@@ -79,7 +79,9 @@ namespace Trxlog2Html
                 .ToList();
             var unitTestResults = doc.Descendants()
                 .Where(x => x.Name.LocalName == "UnitTestResult")
-                .Select(x => new UnitTestResultElement(x)).ToDictionary(x => x.TestId);
+                .Select(x => new UnitTestResultElement(x))
+                .GroupBy(x => x.TestId)
+                .ToDictionary(x => x.Key, x => x.ToList());
 
             var resultSummary = doc.Descendants().
                 Where(x => x.Name.LocalName == "ResultSummary")
@@ -99,34 +101,36 @@ namespace Trxlog2Html
 
         private ReportTestClassModel Map(
             IGrouping<string, UnitTestElement> src,
-            Dictionary<string, UnitTestResultElement> testResults)
+            Dictionary<string, List<UnitTestResultElement>> testResults)
         {
             var ret = new ReportTestClassModel();
             ret.ClassName = src.Key;
 
             ret.TestResults = src
-                .Select(x => Map(x, testResults))
+                .SelectMany(x => Map(x, testResults))
                 .Where(x => x != null)
                 .OrderBy(x => x.TestMethod)
-                .ThenBy(x => x.TestMethod)
                 .ToList();
             return ret;
         }
 
-        private ReportTestResultModel Map(
+        private IEnumerable<ReportTestResultModel> Map(
             UnitTestElement src,
-            Dictionary<string, UnitTestResultElement> testResults)
+            Dictionary<string, List<UnitTestResultElement>> testResults)
         {
-            if (!testResults.TryGetValue(src.Id, out var testResult))
+            if (testResults.TryGetValue(src.Id, out var testResult))
             {
-                return null;
+                foreach (var result in testResult)
+                {
+                    yield return new ReportTestResultModel
+                    {
+                        DisplayName = src.Name,
+                        TestMethod = src.TestMethod.Name,
+                        Duration = result.Duration,
+                        Outcome = result.Outcome
+                    };
+                }
             }
-            var ret = new ReportTestResultModel();
-            ret.DisplayName = src.Name;
-            ret.TestMethod = src.TestMethod.Name;
-            ret.Duration = testResult.Duration;
-            ret.Outcome = testResult.Outcome;
-            return ret;
         }
 
         private ReportSummaryModel Map(ResultSummaryElement src)
