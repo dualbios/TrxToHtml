@@ -124,7 +124,7 @@ namespace Trxlog2Html
                 {
                     yield return new ReportTestResultModel
                     {
-                        DisplayName = src.Name,
+                        DisplayName = result.TestName,
                         TestMethod = src.TestMethod.Name,
                         Duration = result.Duration,
                         Outcome = result.Outcome
