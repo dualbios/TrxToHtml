@@ -18,6 +18,7 @@ namespace Trxlog2Html.ResultXmlElements
             ExecutionId = elem.Attribute("executionId").Value;
             Duration = elem.Attribute("duration").Value;
             Outcome = elem.Attribute("outcome").Value;
+            TestName = elem.Attribute("testName").Value;
         }
 
         /// <summary>
@@ -39,6 +40,11 @@ namespace Trxlog2Html.ResultXmlElements
         /// outcome
         /// </summary>
         public string Outcome { get; set; }
+
+        /// <summary>
+        /// testName
+        /// <summary>
+        public string TestName { get; set; }
     }
 
     /// <summary>
