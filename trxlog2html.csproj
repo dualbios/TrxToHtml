@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Version>1.0.3</Version>    
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFrameworks>net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>trxlog2html</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
@@ -19,7 +19,6 @@
     <PackageReleaseNotes>1.0.3: Support for newer frameworks (.NET 6.0, .NET 7.0, .NET 8.0, .NET 9.0)
 </PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-
   </PropertyGroup>
 
   <ItemGroup>
@@ -31,7 +30,7 @@
     <None Update="built_in_templates\jstest_like.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="README.md">
+    <None Include="README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
