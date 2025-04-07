@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Version>1.0.2</Version>    
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFrameworks>net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>trxlog2html</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
@@ -18,7 +18,6 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageReleaseNotes>1.0.2: Fixed an issue where the tool would fail if there were tests with the same ID within the same TRX file.</PackageReleaseNotes>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,7 +29,7 @@
     <None Update="built_in_templates\jstest_like.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="README.md">
+    <None Include="README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
