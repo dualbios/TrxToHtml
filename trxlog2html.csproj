@@ -6,7 +6,7 @@
     <TargetFrameworks>net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>trxlog2html</ToolCommandName>
-    <PackageOutputPath>./nupkg</PackageOutputPath>
+    <PackageOutputPath>./bin/nupkg</PackageOutputPath>
     <Authors>Ryo Hikosaka</Authors>
     <Company>PRGM</Company>
     <Description>Trxlog2html is the command line tool for converting the output result of VSTest log to html.</Description>
