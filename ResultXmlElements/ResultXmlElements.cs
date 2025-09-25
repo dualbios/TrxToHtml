@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Xml.Linq;
+using RazorEngine.Compilation.ImpromptuInterface.InvokeExt;
 
 namespace Trxlog2Html.ResultXmlElements
 {
@@ -19,6 +20,16 @@ namespace Trxlog2Html.ResultXmlElements
             Duration = elem.Attribute("duration").Value;
             Outcome = elem.Attribute("outcome").Value;
             TestName = elem.Attribute("testName").Value;
+                Output = CreateOutputElement(elem.Descendants().FirstOrDefault(x => x.Name.LocalName == "Output"));
+        }
+
+        public UnitOutputElement Output { get; }
+
+        private UnitOutputElement CreateOutputElement(XElement xElement) {
+            if (xElement == null) {
+                return null;
+            }
+            return new UnitOutputElement(xElement);
         }
 
         /// <summary>
@@ -47,24 +58,44 @@ namespace Trxlog2Html.ResultXmlElements
         public string TestName { get; set; }
     }
 
+    public record UnitOutputElement {
+        public UnitOutputElement(XElement elem) {
+            StdOut = elem.Descendants().FirstOrDefault(x => x.Name.LocalName == "StdOut")?.Value;
+            ErrorInfo = new UnitErrorInfoElement(elem.Descendants().FirstOrDefault(x => x.Name.LocalName == "ErrorInfo"));
+        }
+
+        public string StdOut { get; init; }
+        public UnitErrorInfoElement ErrorInfo { get; init; }
+    }
+
+    public record UnitErrorInfoElement {
+        public UnitErrorInfoElement(XElement elem) {
+            if (elem == null) {
+                return;
+            }
+            Message = elem.Descendants().FirstOrDefault(x => x.Name.LocalName == "Message")?.Value;
+            StackTrace = elem.Descendants().FirstOrDefault(x => x.Name.LocalName == "StackTrace")?.Value;
+        }
+
+        public string Message { get; init; }
+        public string StackTrace { get; init; }
+    }
+
     /// <summary>
     /// UnitTest
     /// </summary>
-    public class UnitTestElement
-    {
+    public class UnitTestElement {
 
-        public UnitTestElement()
-        {
+        public UnitTestElement() {
 
         }
 
-        public UnitTestElement(XElement elem)
-        {
+        public UnitTestElement(XElement elem) {
             Id = elem.Attribute("id").Value;
             Name = elem.Attribute("name").Value;
             var testMethodElem = elem.Elements().Where(x => x.Name.LocalName == "TestMethod").FirstOrDefault();
-            if (testMethodElem != null)
-            {
+
+            if (testMethodElem != null) {
                 TestMethod = new TestMethodElement(testMethodElem);
             }
         }
@@ -89,15 +120,12 @@ namespace Trxlog2Html.ResultXmlElements
     /// <summary>
     /// TestMethod
     /// </summary>
-    public class TestMethodElement
-    {
-        public TestMethodElement()
-        {
+    public class TestMethodElement {
+        public TestMethodElement() {
 
         }
 
-        public TestMethodElement(XElement elem)
-        {
+        public TestMethodElement(XElement elem) {
             ClassName = elem.Attribute("className").Value;
             Name = elem.Attribute("name").Value;
         }
@@ -116,34 +144,29 @@ namespace Trxlog2Html.ResultXmlElements
     /// <summary>
     /// ResultSummary
     /// </summary>
-    public class ResultSummaryElement
-    {
-        public ResultSummaryElement()
-        {
+    public class ResultSummaryElement {
+        public ResultSummaryElement() {
         }
 
-        public ResultSummaryElement(XElement elem)
-        {
+        public ResultSummaryElement(XElement elem) {
             var countersElem = elem.Elements().Where(x => x.Name.LocalName == "Counters").FirstOrDefault();
-            if (countersElem != null)
-            {
+
+            if (countersElem != null) {
                 Counters = new CountersElement(countersElem);
             }
         }
+
         public CountersElement Counters { get; set; }
     }
 
     /// <summary>
     /// Counters
     /// </summary>
-    public class CountersElement
-    {
-        public CountersElement()
-        {
+    public class CountersElement {
+        public CountersElement() {
         }
 
-        public CountersElement(XElement elem)
-        {
+        public CountersElement(XElement elem) {
             Total = elem.Attribute("total")?.Value;
             Executed = elem.Attribute("executed")?.Value;
             Passed = elem.Attribute("passed")?.Value;
@@ -193,7 +216,6 @@ namespace Trxlog2Html.ResultXmlElements
         public string InProgress { get; set; }
 
         public string Pending { get; set; }
-
 
 
     }

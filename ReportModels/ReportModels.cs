@@ -8,6 +8,8 @@ namespace Trxlog2Html.ReportModels
     public class ReportModel
     {
         public string StartTime { get; set; }
+        public string FinishTime { get; set; }
+        public string Duration { get; set; }
 
         public ReportSummaryModel Summary { get; set; }
 
@@ -37,6 +39,12 @@ namespace Trxlog2Html.ReportModels
         public string Duration { get; set; }
 
         public string Outcome { get; set; }
+        
+        public string StdOut { get; set; }
+        
+        public string ErrorMessage { get; set; }
+        
+        public string ErrorStackTrace { get; set; }
 
     }
 

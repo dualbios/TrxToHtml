@@ -78,9 +78,20 @@ header {
   border-left: 0.4rem solid #d8000c;
   padding-left: 0.5rem;
 }
+.summary-aborted {
+  color: #ff0073;
+  border-left: 0.4rem solid #ff0073;
+  padding-left: 0.5rem;
+}
+.summary-inconclusive {
+  color: #a38a00;
+  border-left: 0.4rem solid #fdd300;
+  padding-left: 0.5rem;
+}
+
 .summary-pending {
   color: #9f6000;
-  border-left: 0.4rem solid #9f6000;
+  border-left: 0.4rem solid #ffd898;
   padding-left: 0.5rem;
 }
 .summary-empty {
@@ -112,6 +123,17 @@ header {
   display: flex;
   justify-content: space-between;
 }
+.test-error {
+  margin-top: 0.5rem;
+  color: #d8000c;
+  font-family: monospace;
+  white-space: pre-wrap;
+}
+
+.test-error-details .test-error {
+  white-space: none;
+}
+
 .test-method-name {
   width: 20%;
   text-align: left;
@@ -159,6 +181,8 @@ header {
     </header>
     <div id="metadata-container">
         <div id="timestamp">Started: @Model.StartTime</div>
+        <div id="timestamp">Finished: @Model.FinishTime</div>
+        <div id="timestamp">Duration: @Model.Duration</div>
         <div id="summary">
             <div id="suite-summary">
                 <div class="summary-total">Test Classes (@Model.TestClasses.Count())</div>
@@ -166,8 +190,9 @@ header {
             <div id="test-summary">
                 <div class="summary-total">Test Cases (@Model.Summary.Total)</div>
                 <div class="summary-passed">@Model.Summary.Passed passed</div>
-                <div class="summary-failed summary-empty">@Model.Summary.Failed failed</div>
-                <div class="summary-pending summary-empty">@Model.Summary.Pending pending</div>
+                <div class="summary-failed">@Model.Summary.Failed failed</div>
+                <div class="summary-aborted">@Model.Summary.Aborted aborted</div>
+                <div class="summary-inconclusive">@Model.Summary.Inconclusive inconclusive</div>
             </div>
         </div>
     </div>
@@ -187,6 +212,34 @@ header {
               <div class="test-status">@testResult.Outcome</div>
               <div class="test-duration">@testResult.Duration</div>
             </div>
+          @if ("Failed"==testResult.Outcome)
+          {
+          <details>
+            <summary>Error Details</summary>
+            <div class="test-error-details">
+              @if (!string.IsNullOrEmpty(testResult.StdOut))
+              {
+              <div>
+                <strong>StdOut:</strong>
+                @testResult.StdOut</div>
+              }
+              @if (!string.IsNullOrEmpty(testResult.ErrorMessage))
+              {
+              <div>
+                <strong>Error Message:</strong>
+                @testResult.ErrorMessage
+              </div>
+              }
+              @if (!string.IsNullOrEmpty(testResult.ErrorStackTrace))
+              {
+              <div>
+                <strong>Error Stack Trace:</strong>
+                @testResult.ErrorStackTrace
+              </div>
+              }
+            </div>
+          </details>
+          }
         </div>
     }
     </div>

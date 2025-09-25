@@ -1,4 +1,5 @@
-﻿using ConsoleAppFramework;
+﻿using System;
+using ConsoleAppFramework;
 using Microsoft.Extensions.Hosting;
 using System.Collections.Generic;
 using System.Linq;
@@ -88,14 +89,21 @@ namespace Trxlog2Html
                 .Select(x => new ResultSummaryElement(x))
                 .FirstOrDefault();
 
-            var startTime = doc.Descendants().
-                Where(x => x.Name.LocalName == "Times")
-                .Select(x => x.Attribute("start").Value)
-                .FirstOrDefault();
+            string startTimeString = doc.Descendants().
+                                   Where(x => x.Name.LocalName == "Times")
+                                   .Select(x => x.Attribute("start").Value)
+                                   .FirstOrDefault();
+            string finishTimeString = doc.Descendants().
+                                   Where(x => x.Name.LocalName == "Times")
+                                   .Select(x => x.Attribute("finish").Value)
+                                   .FirstOrDefault();
+            
             var model = new ReportModel();
             model.Summary = Map(resultSummary);
             model.TestClasses = unitTestClasses.Select(x => Map(x, unitTestResults)).ToList();
-            model.StartTime = startTime;
+            model.StartTime = startTimeString;
+            model.FinishTime = finishTimeString;
+            model.Duration = (DateTime.Parse(finishTimeString)- DateTime.Parse(startTimeString)).ToString();
             return model;
         }
 
@@ -127,7 +135,10 @@ namespace Trxlog2Html
                         DisplayName = result.TestName,
                         TestMethod = src.TestMethod.Name,
                         Duration = result.Duration,
-                        Outcome = result.Outcome
+                        Outcome = result.Outcome,
+                        StdOut = result.Output?.StdOut,
+                        ErrorMessage = result.Output?.ErrorInfo?.Message,
+                        ErrorStackTrace = result.Output?.ErrorInfo?.StackTrace,
                     };
                 }
             }
