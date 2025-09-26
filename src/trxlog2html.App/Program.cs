@@ -1,175 +1,77 @@
 ﻿using System;
-using ConsoleAppFramework;
-using Microsoft.Extensions.Hosting;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
-using System.Xml.Linq;
+using System.Xml.Serialization;
+using CommandLine;
 using RazorEngine;
 using RazorEngine.Templating;
-using System.IO;
-using Trxlog2Html.ReportModels;
-using Trxlog2Html.ResultXmlElements;
-using System.Reflection;
-using System.Threading;
+using trxlog2html;
+using Encoding = System.Text.Encoding;
 
-namespace Trxlog2Html
-{
-    class Program : ConsoleAppBase
-    {
-        static async Task Main(string[] args)
-        {
-            await Host.CreateDefaultBuilder().RunConsoleAppFrameworkAsync<Program>(args);
-        }
+namespace Trxlog2Html;
 
+public class Program {
 
-        public void All(
-            [Option("i", "Input file path.")] string inputFilePath,
-            [Option("o", "Output file path.")] string outputFilePath,
-            [Option("t", "Template file path.")] string templateFilePath = null)
-        {
-            if (templateFilePath == null)
-            {
-                // use built-in template
-                templateFilePath = Path.Combine(GetBuiltInTemplatesDir(), "jstest_like.cshtml");
+    private static async Task Main(string[] args) {
+        ParserResult<Options> arguments = Parser.Default.ParseArguments<Options>(args);
+
+        if (arguments.Errors.Any()) {
+            Console.WriteLine("Invalid arguments.");
+
+            foreach (Error error in arguments.Errors) {
+                Console.WriteLine(error);
             }
-            var template = ReadTemplate(templateFilePath);
-            // var model = CreateModelFromXml(inputFilePath);
-            
-            using var stream = new FileStream(inputFilePath, FileMode.Open, FileAccess.Read);
-            var model = ReportModel.Parse(stream, CancellationToken.None).Result;
-            
-            var html = Engine.Razor.RunCompile(template, "templateKey", typeof(ReportModel), model);
-            WriteResult(outputFilePath, html);
+
+            return;
         }
 
-        private string GetBuiltInTemplatesDir()
-        {
-            return Path.Combine(
-                Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-                "built_in_templates");
-        }
+        string templateFilePath = string.IsNullOrEmpty(arguments.Value.TemplateFilePath)
+            ? Path.Combine(GetBuiltInTemplatesDir(), "default-template.cshtml")
+            : arguments.Value.TemplateFilePath;
+        string template = ReadTemplate(templateFilePath);
+        string outputFilePath = string.IsNullOrEmpty(arguments.Value.OutputFilePath)
+            ? templateFilePath + ".html"
+            : arguments.Value.OutputFilePath;
+
+        Console.WriteLine("Reading the file...");
+        await using FileStream stream = new (arguments.Value.InputFilePath, FileMode.Open, FileAccess.Read);
+        XmlSerializer serializer = new (typeof(TestRun));
+        Console.WriteLine("Parsing the file...");
+        TestRun result = (TestRun)serializer.Deserialize(stream);
+
+        Console.WriteLine("Generating the report...");
+        string html = Engine.Razor.RunCompile(template, "templateKey", typeof(TestRun), result);
+        Console.WriteLine("Writing the result...");
+        WriteResult(outputFilePath, html);
+        Console.WriteLine("Done.");
+    }
+
+    private static string GetBuiltInTemplatesDir() {
+        return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "Templates");
+    }
 
 
-        private string ReadTemplate(string path)
-        {
-            using (var reader = new StreamReader(path, System.Text.Encoding.UTF8))
-            {
-                return reader.ReadToEnd();
-            }
-        }
+    private static string ReadTemplate(string path) {
+        using StreamReader reader = new (path, Encoding.UTF8);
+        return reader.ReadToEnd();
 
-        private void WriteResult(string path, string result)
-        {
-            using (var writer = new StreamWriter(path, false, System.Text.Encoding.UTF8))
-            {
-                writer.Write(result);
-            }
-        }
+    }
 
-        /// <summary>
-        /// create report models for razor engine from the trx log file.
-        /// </summary>
-        /// <param name="xmlPath">path of the trx log file</param>
-        /// <returns></returns>
-        private ReportModel CreateModelFromXml(string xmlPath)
-        {
-            var doc = XDocument.Load(xmlPath);
-            var unitTestClasses = doc.Descendants()
-                .Where(x => x.Name.LocalName == "UnitTest")
-                .Select(x => new UnitTestElement(x))
-                .Where(x => x.TestMethod != null)
-                .GroupBy(x => x.TestMethod.ClassName)
-                .OrderBy(x => x.Key)
-                .ToList();
-            var unitTestResults = doc.Descendants()
-                .Where(x => x.Name.LocalName == "UnitTestResult")
-                .Select(x => new UnitTestResultElement(x))
-                .GroupBy(x => x.TestId)
-                .ToDictionary(x => x.Key, x => x.ToList());
+    private static void WriteResult(string path, string result) {
+        using StreamWriter writer = new (path, false, Encoding.UTF8);
+        writer.Write(result);
+    }
 
-            var resultSummary = doc.Descendants().
-                Where(x => x.Name.LocalName == "ResultSummary")
-                .Select(x => new ResultSummaryElement(x))
-                .FirstOrDefault();
+    public class Options {
+        [Option('i', "input", Required = true, HelpText = "Input file path.")]
+        public string InputFilePath { get; set; }
 
-            string startTimeString = doc.Descendants().
-                                   Where(x => x.Name.LocalName == "Times")
-                                   .Select(x => x.Attribute("start").Value)
-                                   .FirstOrDefault();
-            string finishTimeString = doc.Descendants().
-                                   Where(x => x.Name.LocalName == "Times")
-                                   .Select(x => x.Attribute("finish").Value)
-                                   .FirstOrDefault();
-            
-            var model = new ReportModel();
-            // model.Summary = Map(resultSummary);
-            // model.TestClasses = unitTestClasses.Select(x => Map(x, unitTestResults)).ToList();
-            // model.StartTime = startTimeString;
-            // model.FinishTime = finishTimeString;
-            // model.Duration = (DateTime.Parse(finishTimeString)- DateTime.Parse(startTimeString)).ToString();
-            return model;
-        }
+        [Option('o', "output", Required = false, HelpText = "Output file path.")]
+        public string OutputFilePath { get; set; }
 
-        private ReportTestClassModel Map(
-            IGrouping<string, UnitTestElement> src,
-            Dictionary<string, List<UnitTestResultElement>> testResults)
-        {
-            var ret = new ReportTestClassModel();
-            ret.ClassName = src.Key;
-
-            ret.TestResults = src
-                .SelectMany(x => Map(x, testResults))
-                .Where(x => x != null)
-                .OrderBy(x => x.TestMethod)
-                .ToList();
-            return ret;
-        }
-
-        private IEnumerable<ReportTestResultModel> Map(
-            UnitTestElement src,
-            Dictionary<string, List<UnitTestResultElement>> testResults)
-        {
-            if (testResults.TryGetValue(src.Id, out var testResult))
-            {
-                foreach (var result in testResult)
-                {
-                    yield return new ReportTestResultModel
-                    {
-                        DisplayName = result.TestName,
-                        TestMethod = src.TestMethod.Name,
-                        Duration = result.Duration,
-                        Outcome = result.Outcome,
-                        StdOut = result.Output?.StdOut,
-                        ErrorMessage = result.Output?.ErrorInfo?.Message,
-                        ErrorStackTrace = result.Output?.ErrorInfo?.StackTrace,
-                    };
-                }
-            }
-        }
-
-        private ReportSummaryModel Map(ResultSummaryElement src)
-        {
-            var ret = new ReportSummaryModel()
-            {
-                // Aborted = src.Counters.Aborted,
-                // Completed = src.Counters.Completed,
-                // Disconnected = src.Counters.Disconnected,
-                // Error = src.Counters.Error,
-                // Executed = src.Counters.Executed,
-                // Failed = src.Counters.Failed,
-                // Inconclusive = src.Counters.Inconclusive,
-                // InProgress = src.Counters.InProgress,
-                // NotExecuted = src.Counters.NotExecuted,
-                // NotRunnable = src.Counters.NotRunnable,
-                // Passed = src.Counters.Passed,
-                // PassedButRunAborted = src.Counters.PassedButRunAborted,
-                // Pending = src.Counters.Pending,
-                // Timeout = src.Counters.Timeout,
-                // Total = src.Counters.Total,
-                // Warning = src.Counters.Warning,
-            };
-            return ret;
-        }
+        [Option('t', "template", Required = false, HelpText = "Template file path.")]
+        public string TemplateFilePath { get; set; }
     }
 }

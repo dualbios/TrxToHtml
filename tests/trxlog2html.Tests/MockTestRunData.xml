@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="obf-testRun-id" name="obf-testRun-name" runUser="obf-runUser"
+         xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+    <Times creation="2024-06-20T10:00:00" queuing="2024-06-20T10:01:00" start="2024-06-20T10:02:00"
+           finish="2024-06-20T10:05:00"/>
+    <TestSettings name="obf-testSettings-name" id="obf-testSettings-id">
+        <Deployment runDeploymentRoot="obf-runDeploymentRoot"/>
+    </TestSettings>
+    <Results>
+        <!-- Obfrustrated UnitTestResult 1 -->
+        <UnitTestResult executionId="obf-executionId-1" testId="obf-testId-1" testName="obf-testName-1"
+                        computerName="obf-computerName" duration="00:00:05.7902513" startTime="2024-06-20T10:02:00"
+                        endTime="2024-06-20T10:03:00" testType="obf-testType" outcome="obf-outcome-1"
+                        testListId="obf-testListId" relativeResultsDirectory="obf-relativeResultsDirectory-1">
+            <Output>
+                <StdOut>obf-StdOut-1</StdOut>
+                <ErrorInfo>
+                    <Message>obf-errorMessage-1</Message>
+                    <StackTrace>obf-stackTrace-1</StackTrace>
+                </ErrorInfo>
+            </Output>
+        </UnitTestResult>
+        <!-- ...existing code for other UnitTestResults, each attribute value replaced similarly... -->
+        <UnitTestResult executionId="obf-executionId-1" testId="obf-testId-1" testName="obf-testName-1"
+                        computerName="obf-computerName" duration="00:00:04.123" startTime="2024-06-21T10:02:00"
+                        endTime="2024-06-21T10:03:00" testType="obf-testType" outcome="obf-outcome-1"
+                        testListId="obf-testListId" relativeResultsDirectory="obf-relativeResultsDirectory-1"/>
+        <UnitTestResult executionId="obf-executionId-1" testId="obf-testId-1" testName="obf-testName-1"
+                        computerName="obf-computerName" duration="00:00:01.12345" startTime="2024-06-22T10:02:00"
+                        endTime="2024-06-22T10:03:00" testType="obf-testType" outcome="obf-outcome-1"
+                        testListId="obf-testListId" relativeResultsDirectory="obf-relativeResultsDirectory-1">
+            <Output>
+                <StdOut>obf-StdOut-2</StdOut>
+            </Output>
+        </UnitTestResult>
+    </Results>
+    <TestDefinitions>
+        <!-- Obfrustrated UnitTest definitions -->
+        <UnitTest name="obf-unitTest-1" storage="obf-storage-1" id="obf-uid-1">
+            <Execution id="obf-exec-uid-1"/>
+            <TestMethod codeBase="obf-codeBase-1" adapterTypeName="obf-adapterTypeName" className="obf-className"
+                        name="obf-methodName-1"/>
+        </UnitTest>
+        <UnitTest name="obf-unitTest-2" storage="obf-storage-2" id="obf-uid-2">
+            <Execution id="obf-exec-uid-2"/>
+            <TestMethod codeBase="obf-codeBase-2" adapterTypeName="obf-adapterTypeName" className="obf-className"
+                        name="obf-methodName-2"/>
+        </UnitTest>
+        <UnitTest name="obf-unitTest-3" storage="obf-storage-3" id="obf-uid-3">
+            <Execution id="obf-exec-uid-3"/>
+            <TestMethod codeBase="obf-codeBase-3" adapterTypeName="obf-adapterTypeName" className="obf-className"
+                        name="obf-methodName-3"/>
+        </UnitTest>
+        <!-- ...existing code... -->
+    </TestDefinitions>
+    <TestEntries>
+        <TestEntry testId="obf-testEntry-testId-1" executionId="obf-testEntry-executionId-1"
+                   testListId="obf-testEntry-testListId"/>
+        <TestEntry testId="obf-testEntry-testId-2" executionId="obf-testEntry-executionId-2"
+                   testListId="obf-testEntry-testListId"/>
+        <TestEntry testId="obf-testEntry-testId-3" executionId="obf-testEntry-executionId-3"
+                   testListId="obf-testEntry-testListId"/>
+    </TestEntries>
+    <TestLists>
+        <TestList name="obf-TestList-1" id="obf-testList-1"/>
+        <TestList name="obf-TestList-2" id="obf-testList-2"/>
+    </TestLists>
+    <ResultSummary outcome="obf-outcome-summary">
+        <Counters total="1" executed="2" passed="3" failed="4" error="5" timeout="6" aborted="7" inconclusive="8"
+                  passedButRunAborted="9" notRunnable="10" notExecuted="11" disconnected="12" warning="13"
+                  completed="14" inProgress="15" pending="16"/>
+        <Output>
+            <StdOut>obf-ResultSummary-StdOut</StdOut>
+        </Output>
+        <RunInfos>
+            <RunInfo computerName="obf-runInfo-computerName" outcome="obf-runInfo-outcome"
+                     timestamp="2024-06-20T12:34:56.789">
+                <Text>obf-runInfo-Text-1</Text>
+            </RunInfo>
+            <RunInfo computerName="obf-runInfo-computerName" outcome="obf-runInfo-outcome"
+                     timestamp="2024-06-21T12:34:56.789">
+                <Text>obf-runInfo-Text-2</Text>
+            </RunInfo>
+            <RunInfo computerName="obf-runInfo-computerName" outcome="obf-runInfo-outcome"
+                     timestamp="2024-06-22T12:34:56.789">
+                <Text>obf-runInfo-Text-3</Text>
+            </RunInfo>
+        </RunInfos>
+    </ResultSummary>
+</TestRun>

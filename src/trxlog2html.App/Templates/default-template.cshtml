@@ -1,0 +1,268 @@
+<html lang="en">
+<head><meta charset="utf-8"/>
+<title>Test Report</title>
+<style>
+html,
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+body {
+  padding: 2rem 1rem;
+  font-size: 0.85rem;
+}
+#html-content {
+  margin: 0 auto;
+  max-width: 70rem;
+}
+header {
+  display: flex;
+  align-items: center;
+}
+#title {
+  margin: 0;
+  flex-grow: 1;
+}
+#logo {
+  height: 4rem;
+}
+.timestamp {
+  color: #777;
+  margin-top: 0.5rem;
+}
+
+#summary {
+  color: #333;
+  margin: 2rem 0;
+  display: flex;
+  font-family: monospace;
+  font-size: 1rem;
+}
+#summary > div {
+  margin-right: 2rem;
+  background: #eee;
+  padding: 1rem;
+  min-width: 15rem;
+}
+#summary > div:last-child {
+  margin-right: 0;
+}
+@@media only screen and (max-width: 720px) {
+  #summary {
+    flex-direction: column;
+  }
+  #summary > div {
+    margin-right: 0;
+    margin-top: 2rem;
+  }
+  #summary > div:first-child {
+    margin-top: 0;
+  }
+}
+
+.summary-total {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+.summary-passed {
+  color: #4f8a10;
+  border-left: 0.4rem solid #4f8a10;
+  padding-left: 0.5rem;
+}
+.summary-failed,
+.summary-obsolete-snapshots {
+  color: #d8000c;
+  border-left: 0.4rem solid #d8000c;
+  padding-left: 0.5rem;
+}
+.summary-aborted {
+  color: #ff0073;
+  border-left: 0.4rem solid #ff0073;
+  padding-left: 0.5rem;
+}
+.summary-inconclusive {
+  color: #a38a00;
+  border-left: 0.4rem solid #fdd300;
+  padding-left: 0.5rem;
+}
+
+.summary-pending {
+  color: #9f6000;
+  border-left: 0.4rem solid #ffd898;
+  padding-left: 0.5rem;
+}
+.summary-empty {
+  color: #999;
+  border-left: 0.4rem solid #999;
+}
+
+.test-result {
+  padding: 1rem;
+  margin-bottom: 0.25rem;
+}
+.test-result:last-child {
+  border: 0;
+}
+.test-result.passed {
+  background-color: #dff2bf;
+  color: #4f8a10;
+}
+.test-result.failed {
+  background-color: #ffbaba;
+  color: #d8000c;
+}
+.test-result.pending {
+  background-color: #ffdf61;
+  color: #9f6000;
+}
+
+.test-info {
+  display: flex;
+  justify-content: space-between;
+}
+.test-error {
+  margin-top: 0.5rem;
+  color: #d8000c;
+  font-family: monospace;
+  white-space: pre-wrap;
+}
+
+.test-error-details .test-error {
+  white-space: none;
+}
+
+.test-method-name {
+  width: 20%;
+  text-align: left;
+  font-weight: bold;
+  word-break: break-word;
+}
+.test-title {
+  width: 40%;
+  text-align: left;
+  font-style: italic;
+}
+.test-status {
+  width: 20%;
+  text-align: right;
+}
+.test-duration {
+  width: 10%;
+  text-align: right;
+  font-size: 0.75rem;
+}
+.test-file-container {
+  margin-bottom: 2rem;
+}
+.test-file-info .class-name{
+  padding: 1rem;
+  background-color: #dae6fd;
+  color: #313131;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+.test-class-container {
+  margin-bottom: 2rem;
+}
+.test-class-info {
+  padding: 1rem;
+  background-color: #eee;
+  color: #777;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+.test-class-info .class-name {
+  word-break: break-all;
+  flex-grow: 1;
+  font-family: monospace;
+  font-size: 1rem;
+}
+</style>
+</head>
+<body>
+<div id="html-content">
+    <header>
+        <h1 id="title">Test Report</h1>
+    </header>
+    <div id="metadata-container">
+        <div class="timestamp">Started: @Model.Times.Start</div>
+        <div class="timestamp">Finished: @Model.Times.Finish</div>
+        <div class="timestamp">Duration: @(Model.Times.Finish-Model.Times.Start)</div>
+        <div id="summary">
+            <div id="suite-summary">
+                <div class="summary-total">Test Classes (@Model.ResultSummary.Counters.Total)</div>
+            </div>
+            <div id="test-summary">
+                <div class="summary-total">Test Cases (@Model.ResultSummary.Counters.Total)</div>
+                <div class="summary-passed">@Model.ResultSummary.Counters.Passed Passed</div>
+                <div class="summary-failed">@Model.ResultSummary.Counters.Failed Failed</div>
+                <div class="summary-aborted">@Model.ResultSummary.Counters.Aborted Aborted</div>
+                <div class="summary-inconclusive">@Model.ResultSummary.Counters.Inconclusive Inconclusive</div>
+            </div>
+        </div>
+    </div>
+    @foreach (var codebase in Model.ResultDefinitions.GroupBy(tc => System.IO.Path.GetFileName(tc.Definition.TestMethod.CodeBase)).OrderBy(g => g.Key))
+    {
+      <div class="test-file-container">
+        <div class="test-file-info">
+          <div class="class-name">@codebase.Key</div>
+        </div>
+        
+      @foreach (var testClass in codebase.GroupBy(tc => tc.Definition.TestMethod.ClassName).OrderBy(g => g.Key))
+      {
+        <div class="test-class-container">
+          <div class="test-class-info">
+              <div class="class-name">@testClass.Key</div>
+          </div>
+        
+        @foreach (var testResult in testClass)
+        {
+          <div class="test-result @testResult.UnitTestResult.Outcome">
+              <div class="test-info">
+                <div class="test-method-name">@testResult.Definition.TestMethod.Name</div>
+                <div class="test-title">@testResult.UnitTestResult.TestName</div>
+                <div class="test-status">@testResult.UnitTestResult.Outcome</div>
+                <div class="test-duration">@testResult.UnitTestResult.Duration</div>
+              </div>
+            @if ("Failed"==testResult.UnitTestResult.Outcome)
+            {
+            <details>
+              <summary>Error Details</summary>
+              <div class="test-error-details">
+                @if (!string.IsNullOrEmpty(testResult.UnitTestResult.Output?.StdOut))
+                {
+                <div>
+                  <strong>StdOut:</strong>
+                  @testResult.UnitTestResult.Output.StdOut</div>
+                }
+                @if (!string.IsNullOrEmpty(testResult.UnitTestResult.Output.ErrorInfo?.Message))
+                {
+                <div>
+                  <strong>Error Message:</strong>
+                  @testResult.UnitTestResult.Output.ErrorInfo?.Message
+                </div>
+                }
+                @if (!string.IsNullOrEmpty(testResult.UnitTestResult.Output.ErrorInfo?.StackTrace))
+                {
+                <div>
+                  <strong>Error Stack Trace:</strong>
+                  @testResult.UnitTestResult.Output.ErrorInfo?.StackTrace
+                </div>
+                }
+              </div>
+            </details>
+            }
+          </div>
+        }
+        </div>
+      }
+    </div>
+  }
+</div>
+</body>
+</html>

@@ -24,4 +24,11 @@
       <ProjectReference Include="..\..\src\trxlog2html.app\trxlog2html.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="MockTestRunData.xml" />
+      <Content Include="MockTestRunData.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>

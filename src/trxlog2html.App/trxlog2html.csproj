@@ -21,14 +21,24 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ConsoleAppFramework" Version="3.3.2" />
+    <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="RazorEngine.NetCore" Version="3.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="built_in_templates\jstest_like.cshtml">
+    <None Update="built_in_templates\default-template.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="built_in_templates\jstest_like_copy.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Templates\default-template.cshtml" />
+    <Content Include="Templates\default-template.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
