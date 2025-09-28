@@ -35,15 +35,15 @@ public class Program {
             ? templateFilePath + ".html"
             : arguments.Value.OutputFilePath;
 
-        Console.WriteLine("Reading the file...");
+        Console.WriteLine($"Reading the file {arguments.Value.InputFilePath}...");
         await using FileStream stream = new (arguments.Value.InputFilePath, FileMode.Open, FileAccess.Read);
         XmlSerializer serializer = new (typeof(TestRun));
         Console.WriteLine("Parsing the file...");
         TestRun result = (TestRun)serializer.Deserialize(stream);
 
-        Console.WriteLine("Generating the report...");
+        Console.WriteLine($"Generating the report. Use template {templateFilePath}...");
         string html = Engine.Razor.RunCompile(template, "templateKey", typeof(TestRun), result);
-        Console.WriteLine("Writing the result...");
+        Console.WriteLine($"Writing results to {outputFilePath}...");
         WriteResult(outputFilePath, html);
         Console.WriteLine("Done.");
     }
