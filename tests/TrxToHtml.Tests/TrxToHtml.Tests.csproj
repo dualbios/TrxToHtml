@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\trxlog2html.app\trxlog2html.csproj" />
+      <ProjectReference Include="..\..\src\TrxToHtml.app\TrxToHtml.App.csproj" />
     </ItemGroup>
 
     <ItemGroup>

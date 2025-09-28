@@ -7,10 +7,9 @@ using System.Xml.Serialization;
 using CommandLine;
 using RazorEngine;
 using RazorEngine.Templating;
-using trxlog2html;
 using Encoding = System.Text.Encoding;
 
-namespace Trxlog2Html;
+namespace TrxToHtml;
 
 public class Program {
 

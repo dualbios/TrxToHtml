@@ -2,7 +2,7 @@
 // //
 // // Copyright © 2025 - 2025, Alcon. All rights reserved.
 
-namespace trxlog2html.Tests;
+namespace TrxToHtml.Tests;
 
 public class CancellationTokenSourceFactory {
     public static CancellationTokenSource GetCancellationTokenSource() {
