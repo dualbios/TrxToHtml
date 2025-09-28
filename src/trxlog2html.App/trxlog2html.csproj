@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Version>1.0.4</Version>    
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>trxlog2html</ToolCommandName>
+    <PackageOutputPath>./bin/nupkg</PackageOutputPath>
+    <Authors>Ryo Hikosaka</Authors>
+    <Company>PRGM</Company>
+    <Description>Trxlog2html is the command line tool for converting the output result of VSTest log to html.</Description>
+<!--    <PackageLicenseFile>LICENSE</PackageLicenseFile>-->
+    <Copyright>Ryo HIKOSAKA</Copyright>
+    <PackageProjectUrl>https://github.com/HikosakaRyo/trxlog2html</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/HikosakaRyo/trxlog2html</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageReleaseNotes>1.0.4: Support for newer frameworks (.NET 6.0, .NET 7.0, .NET 8.0, .NET 9.0)
+</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.9.1" />
+    <PackageReference Include="RazorEngine.NetCore" Version="3.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="built_in_templates\default-template.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="built_in_templates\jstest_like_copy.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Templates\default-template.cshtml" />
+    <Content Include="Templates\default-template.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>
